@@ -2,59 +2,59 @@ import pandas as pd
 
 
 def clean_address(address, region_strings):
-    for qaxaq in region_strings:
-        if qaxaq in address:
-            address = address.replace(qaxaq, "").strip(",").strip().strip(",").strip()
+    for region in region_strings:
+        address = address.replace(region, "").strip(',').strip().strip(',').strip()
     return address
 
 
 def strip_address(address):
-    new_data = str(address).replace(',', " ").strip().split(" ")
-    for i in range(len(new_data)):
-        if '' in new_data:
-            new_data.remove('')
-    return new_data
+    return list(filter(None, str(address).replace(',', " ").strip().split(" ")))
 
 
 def find_region(address, new_data, regions):
-    for reg_ct in new_data[0:2]:
+    for reg_ct in new_data[:2]:
         for reg in regions:
             if reg in reg_ct:
                 data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
-                region = reg
-                return region, data
+                return reg, data
     return '', address
 
 
 def find_region_city(region, data):
     df = pd.read_excel('Book1.xlsx')
-    for i in range(len(df.values)):
-        if region in df.values[i][1]:
-            if str(df.values[i][0]) in data:
-                city = df.values[i][0]
-                data = data.replace(city, '').strip(",").strip().strip(",").strip()
-                return city, data
+    
+    for index, row in df.iterrows():
+        if region in row.iloc[1] and str(row.iloc[0]) in data:
+            city = row.iloc[0]
+            data = data.replace(city, '').strip(',').strip().strip(",").strip()
+            return city, data
+    
     return '', data
 
 
 def check_special_case(region):
     if region == 'Տավուշ':
-        city = "Այլ"
-    else:
-        city = region
-    return city
+        return "Այլ"
+    return region
+
 
 
 def find_city(address, new_data):
-    for reg_ct in new_data[0:2]:
-        df = pd.read_excel('Book1.xlsx')
-        for i in range(len(df.values)):
-            if str(df.values[i][0]) == reg_ct:
-                city = df.values[i][0]
-                data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
-                region = df.values[i][1]
-                data = str(data).replace(region, '').strip(",").strip().strip(",").strip()
-                return region, city, data
+    df = pd.read_excel('Book1.xlsx')
+
+    for reg_ct in new_data[:2]:
+        mask = df.iloc[:, 0] == reg_ct
+        matching_rows = df[mask]
+
+        if not matching_rows.empty:
+            city = matching_rows.iloc[0, 0]
+            region = matching_rows.iloc[0, 1]
+            
+            data = str(address).replace(reg_ct, '').strip(",").strip()
+            data = data.replace(region, '').strip(",").strip()
+
+            return region, city, data
+
     return '', '', address
 
 
@@ -75,6 +75,8 @@ def find_region_in_double(address):
             data = str(address).replace(city, '').strip(",").strip().strip(",").strip()
             return region, city, data
     return '', '', address
+
+
 
 def check_default_case(address):
     global region, city, data
@@ -134,6 +136,6 @@ def bank_region(address):
         print(data)
 
 
-bank_region("Երևան Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+bank_region("ՀՀ, Նորք Մարաշ,  մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
 
 

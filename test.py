@@ -84,18 +84,6 @@ def check_default_case(address):
     return region, city, data
 
 
-def fix_vayots_dzor(region, city, address):
-    if region == 'Վայոց':
-        region = 'Վայոց Ձոր'
-        data = address.replace(region, "").strip(",").strip().strip(",").strip()
-        if city == 'Վայոց':
-            city = 'Վայոց Ձոր'
-            data = data.replace(city, "").strip(",").strip().strip(",").strip()
-            return region, city, data
-
-    return region, city, data
-
-
 def bank_region(address):
     regions = ['Երևան', 'Արմավիր', 'Արարատ', 'Արագածոտն', 'Կոտայք', 'Շիրակ', 'Լոռի', 'Տավուշ', 'Գեղարքունիք', 'Վայոց',
                'Սյունիք']
@@ -134,62 +122,18 @@ def bank_region(address):
                 print(city)
                 print(data)
 
-    region, city, data = fix_vayots_dzor(region, city, address)
-    print(region)
-    print(city)
-    print(data)
-
-
-
-bank_region("Վայոց Ձոր Եղեգնաձոր մ․ ք․ ,Քոչար  փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
-
-
-"""
-    try:
-        region, data = find_region(address, new_data, regions)
-        print(region)
-        try:
-            city, data = find_region_city(region, data)
-            print(city)
-            print(data)
-        except:
-            city = check_special_case(region)
-            print(city)
-            print(data)
-    except:
-        region, city, data = find_city(address, new_data)
-        print(region)
-        print(city)
-        print(data)
-    try:
-        region, city, data = find_region_in_double(address)
-        print(region)
-        print(city)
-        print(data)
-    except:
-        region, city, data = check_default_case(address)
-        print(region)
-        print(city)
-        print(data)
-
-"""
-
-
-'''
-region, data = find_region(address, new_data, regions)
-    if region:
-        print(region)
-        city, data = find_region_city(region, data)
-        if city:
-            print(1)
-            print(city)
-            print(data)
+    if region == 'Վայոց':
+        region = 'Վայոց Ձոր'
+        data = address.replace(region, "").strip(",").strip().strip(",").strip()
+        if city == 'Վայոց':
+            city = 'Վայոց Ձոր'
         else:
-            city = check_special_case(region)
-            print(city)
-            print(data)
+            data = data.replace(city, "").strip(",").strip().strip(",").strip()
+        print(region)
+        print(city)
+        print(data)
 
 
-    else:
-        print('a')
-        '''
+bank_region("Երևան Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+
+

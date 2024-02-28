@@ -22,7 +22,6 @@ def find_region(address, new_data, regions):
 
 def find_region_city(region, data):
     df = pd.read_excel('Book1.xlsx')
-    
     for index, row in df.iterrows():
         if region in row.iloc[1] and str(row.iloc[0]) in data:
             city = row.iloc[0]
@@ -38,52 +37,50 @@ def check_special_case(region):
     return region
 
 
-
 def find_city(address, new_data):
     df = pd.read_excel('Book1.xlsx')
-
     for reg_ct in new_data[:2]:
         mask = df.iloc[:, 0] == reg_ct
         matching_rows = df[mask]
-
         if not matching_rows.empty:
             city = matching_rows.iloc[0, 0]
             region = matching_rows.iloc[0, 1]
-            
             data = str(address).replace(reg_ct, '').strip(",").strip()
             data = data.replace(region, '').strip(",").strip()
-
-            return region, city, data
-
-    return '', '', address
-
-
-def find_region_in_double(address):
-    global region, city, data
-    double = ['Նոր Նորք', 'Զեյթուն', 'Մալաթիա', "Մարաշ"]
-    for ct in double:
-        if ct in address:
-            if ct == "Զեյթուն":
-                city = "Քանաքեռ-Զեյթուն"
-            elif ct == "Մալաթիա":
-                city = "Մալաթիա-Սեբաստիա"
-            elif ct == "Մարաշ":
-                city = "Նորք-Մարաշ"
-            else:
-                city = ct
-            region = "Երևան"
-            data = str(address).replace(city, '').strip(",").strip().strip(",").strip()
             return region, city, data
     return '', '', address
-
 
 
 def check_default_case(address):
-    global region, city, data
-    region = 'Երևան'
-    city = 'Երևան'
-    data = address
-    return region, city, data
+    return 'Երևան', 'Երևան', address
+
+
+def find_region_in_double(address):
+    double_cities = {
+        "Նոր Նորք": "Նոր Նորք",
+        "Զեյթուն": "Քանաքեռ-Զեյթուն",
+        "Մալաթիա": "Մալաթիա-Սեբաստիա",
+        "Մարաշ": "Նորք-Մարաշ"
+    }
+    for city, city_alias in double_cities.items():
+        if city in address:
+            region = "Երևան"
+            city = city_alias
+            data = address.replace(city, '').strip(",").strip().strip(",").strip()
+            return region, city, data
+    return '', '', address
+
+
+def vayoc_dzor(region, city, address):
+    if region == 'Վայոց':
+        region = 'Վայոց Ձոր'
+        data = address.replace(region, "").strip(",").strip().strip(",").strip()
+        if city == 'Վայոց':
+            city = 'Վայոց Ձոր'
+        else:
+            data = data.replace(city, "").strip(",").strip().strip(",").strip()
+        return region, city, data
+    return '', '', ''
 
 
 def bank_region(address):
@@ -97,7 +94,6 @@ def bank_region(address):
 
     region, data = find_region(address, new_data, regions)
     if region:
-        print(region)
         city, data = find_region_city(region, data)
         if city:
             print(city)
@@ -112,30 +108,25 @@ def bank_region(address):
             print(region)
             print(city)
             print(data)
-        if not region:
-            region, city, data = find_region_in_double(address)
-            if region:
-                print(region)
-                print(city)
-                print(data)
-            else:
-                region, city, data = check_default_case(address)
-                print(region)
-                print(city)
-                print(data)
-
-    if region == 'Վայոց':
-        region = 'Վայոց Ձոր'
-        data = address.replace(region, "").strip(",").strip().strip(",").strip()
-        if city == 'Վայոց':
-            city = 'Վայոց Ձոր'
         else:
-            data = data.replace(city, "").strip(",").strip().strip(",").strip()
+            region, city, data = check_default_case(address)
+            print(region)
+            print(city)
+            print(data)
+
+    region, city, data = find_region_in_double(address)
+    if region:
+        print(region)
+        print(city)
+        print(data)
+
+    region, city, data = vayoc_dzor(region, city, address)
+    if region:
         print(region)
         print(city)
         print(data)
 
 
-bank_region("ՀՀ, Նորք Մարաշ,  մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+bank_region("ՀՀ Երևան Նոր Նորք մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
 
 

@@ -14,7 +14,7 @@ def strip_address(address):
 def find_region(address, new_data, regions):
     for reg_ct in new_data[:2]:
         for reg in regions:
-            if reg in reg_ct:
+            if reg in str(reg_ct).title():
                 data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
                 return reg, data
     return '', address
@@ -23,7 +23,7 @@ def find_region(address, new_data, regions):
 def find_region_city(region, data):
     df = pd.read_excel('Book1.xlsx')
     for index, row in df.iterrows():
-        if region in row.iloc[1] and str(row.iloc[0]) in data:
+        if region in row.iloc[1] and str(row.iloc[0]) in str(data).title():
             city = row.iloc[0]
             data = data.replace(city, '').strip(',').strip().strip(",").strip()
             return city, data
@@ -41,6 +41,7 @@ def find_city(address, new_data):
     df = pd.read_excel('Book1.xlsx')
     for reg_ct in new_data[:2]:
         mask = df.iloc[:, 0] == reg_ct
+        print(reg_ct)
         matching_rows = df[mask]
         if not matching_rows.empty:
             city = matching_rows.iloc[0, 0]
@@ -94,6 +95,7 @@ def bank_region(address):
 
     region, data = find_region(address, new_data, regions)
     if region:
+        print(region)
         city, data = find_region_city(region, data)
         if city:
             print(city)
@@ -127,6 +129,6 @@ def bank_region(address):
         print(data)
 
 
-bank_region("ՀՀ Երևան Նոր Նորք մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+bank_region("ՀՀ Երևան ավան մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
 
 

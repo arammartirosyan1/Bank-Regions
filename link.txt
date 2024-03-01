@@ -1,0 +1,4 @@
+https://prod-48.westeurope.logic.azure.com:443/workflows/eb0f0bf4e2f3412e8191ec702f8e3445/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=R_4jPOdzn9LHCJNiLNUzNzVTHpFL2NFAxpodd150nAU
+
+
+@equals(triggeroutputs()['headers']['Secret'], '57964aa2-6c3e-4710-8881-e1da54eb3938')

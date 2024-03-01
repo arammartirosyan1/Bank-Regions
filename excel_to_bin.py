@@ -1,4 +1,4 @@
-with open('text_file.txt', 'rb') as file:
+with open('Book1.xlsx', 'rb') as file:
     text = file.read()
 
 binary_data = b''.join(format(byte, '08b').encode() for byte in text)

@@ -2,3 +2,4 @@ https://prod-48.westeurope.logic.azure.com:443/workflows/eb0f0bf4e2f3412e8191ec7
 
 
 @equals(triggeroutputs()['headers']['Secret'], '57964aa2-6c3e-4710-8881-e1da54eb3938')
+

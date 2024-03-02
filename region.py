@@ -1,92 +1,73 @@
-import pandas as pd
-
-regions = ['Երևան', 'Արմավիր', 'Արարատ', 'Արագածոտն', 'Կոտայք', 'Շիրակ', 'Լոռի', 'Տավուշ', 'Գեղարքունիք', 'Վայոց', 'Սյունիք']
-
-region_strings = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ", "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
-
-double = ['Նոր Նորք', 'Զեյթուն', 'Մալաթիա', "Մարաշ"]
+"""import pandas as pd
 
 
-def bank_region(address):
+def clean_address1(address, region_strings1):
+    for region in region_strings1:
+        if region in address:
+            address = address.replace(region, "").strip(',').strip().strip(',').strip()
+            print(address)
+            return address
 
-    num = 10
-    ####################
-    for qaxaq in region_strings:
-        if qaxaq in address:
-            address = address.replace(qaxaq, "").strip(",").strip().strip(",").strip()
-    #####################
-    new_data = str(address).replace(',', " ").strip().split(" ")
-    for i in range(len(new_data)):
-        if '' in new_data:
-            new_data.remove('')
-    ##############################
-    for reg_ct in new_data[0:2]:
-        for reg in regions:
-            if reg in reg_ct:
-                data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
-                region = reg
-                num -= 2
-                df = pd.read_excel('Book1.xlsx')
-                for i in range(len(df.values)):
-                    if region in df.values[i][1]:
-                        if str(df.values[i][0]) in data:
-                            city = df.values[i][0]
-                            data = data.replace(city, '').strip(",").strip().strip(",").strip()
-                            num -= 2
-    ##############################
-    if num == 10:
-        for reg_ct in new_data[0:2]:
-            df = pd.read_excel('Book1.xlsx')
-            for i in range(len(df.values)):
-                if str(df.values[i][0]) == reg_ct:
-                    city = df.values[i][0]
-                    data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
-                    region = df.values[i][1]
-                    data = str(data).replace(region, '').strip(",").strip().strip(",").strip()
-                    num -= 1
-    ##############################
-    if num == 10:
-        for ct in double:
-            if ct in address:
-                if ct == "Զեյթուն":
-                    city = "Քանաքեռ-Զեյթուն"
-                elif ct == "Մալաթիա":
-                    city = "Մալաթիա-Սեբաստիա"
-                elif ct == "Մարաշ":
-                    city = "Նորք-Մարաշ"
-                else:
-                    city = ct
-                region = "Երևան"
-                data = str(address).replace(city, '').strip(",").strip().strip(",").strip()
-                num -= 1
-    ##############################
-    if num == 8:
-        if region == 'Տավուշ':
-            city = "Այլ"
-        else:
-            city = region
-        num -= 1
 
-    ##############################
-    if num == 10:
-        region ='Երևան'
-        city ='Երևան'
-        data = address
-        num -= 1
-    ##############################
-    if region == 'Վայոց':
-        region = 'Վայոց Ձոր'
-        data = address.replace(region, "").strip(",").strip().strip(",").strip()
-        if city == 'Վայոց':
-            city = 'Վայոց Ձոր'
-        else:
-            data = data.replace(city, "").strip(",").strip().strip(",").strip()
+def find_region_city(region, data):
+    df = pd.read_excel('Book1.xlsx')
+    for index, row in df.iterrows():
+        if region in row.iloc[1] and str(row.iloc[0]) in str(data).title():
+            city = row.iloc[0]
+            data = data.replace(city, '').strip(',').strip().strip(",").strip()
+            return city, data
+    return '', data
 
-    print(region)
+
+def check_special_case(region):
+    if region == 'Տավուշ':
+        return "Այլ"
+    return region
+
+
+def bank_region1(region, address):
+    region_strings = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ",
+                      "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
+
+    address = clean_address1(address, region_strings)
+    print(1)
+
+    city, data = find_region_city(region, address)
+    if city:
+        return city, data
+    else:
+        city = check_special_case(region)
+        return city
+
+
+def print_bank_region1(region, address):
+    city, data = bank_region1(region, address)
     print(city)
     print(data)
 
 
-bank = bank_region("Արաբկիր ,Քոչար  փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+print_bank_region1("Երևան", "ՀՀ Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+"""
 
 
+
+
+
+
+
+
+def clean_address1(address):
+    region_strings = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ",
+                      "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
+
+    for r in region_strings:
+        print(r)
+        print(address)
+        address = address.replace(r, "").strip(',').strip().strip(',').strip()
+    print(address)
+    return address
+
+
+
+
+clean_address1("ՀՀ Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")

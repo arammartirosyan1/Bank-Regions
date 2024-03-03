@@ -25,8 +25,8 @@ def clean_address(address, region_strings):
     return '', '', address
 
 
-def clean_address1(address, region_strings1):
-    for region in region_strings1:
+def clean_address1(address, region_strings):
+    for region in region_strings:
         address = address.replace(region, "").strip(',').strip().strip(',').strip()
     return address
 
@@ -43,13 +43,13 @@ def find_region(address, new_data, regions):
                 return reg, data
     return '', address
 
-def clean_region(address, new_data, regions):
+
+def clean_region(data, new_data, region):
     for reg_ct in new_data[:2]:
-        for reg in regions:
-            if reg in str(reg_ct).title():
-                data = str(address).replace(reg_ct, '').strip(",").strip().strip(",").strip()
-                return reg, data
-    return '', address
+        if region in str(reg_ct).title():
+            data = str(data).replace(reg_ct, '').strip(",").strip().strip(",").strip()
+            return data
+    return data
 
 
 def find_region_city(region, data):
@@ -87,8 +87,9 @@ def check_default_case(address):
 
 
 def bank_region(address):
-    regions = ['Երևան', 'Արմավիր', 'Արարատ', 'Արագածոտն', 'Կոտայք', 'Շիրակ', 'Լոռի', 'Տավուշ', 'Գեղարքունիք', 'Վայոց',
-               'Սյունիք']
+    regions = ['Երևան', 'Արմավիր', 'Արարատ', 'Արագածոտն', 'Կոտայք', 'Շիրակ', 'Լոռի', 'Տավուշ', 'Գեղարքունիք',
+               'Վայոց Ձոր', 'Սյունիք']
+
     region_strings = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ",
                       "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
 
@@ -124,26 +125,24 @@ def bank_region(address):
 
 def print_bank_region(address):
     region, city, data = bank_region(address)
-    print(region)
-    print(city)
-    print(data)
-
-
-print_bank_region("ՀՀ Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
+    return region, city, data
 
 
 def bank_region1(region, address):
-    region_strings1 = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ",
-                       "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
 
-    data1 = clean_address1(address, region_strings1)
+    region_strings = ["ք․", "ք.", "Ք․", "Ք.", "քաղաք", "Քաղաք", "մ․", "մ.", "Մ․", "Մ.", "մարզ", "Մարզ", "ՀՀ", "հհ",
+                      "գ․", "գ.", "Գ․", "Գ.", "գյուղ", "Գյուղ", "հ․", "հ.", "Հ․", "Հ.", "համայնք", "Համայնք"]
 
-    city, data = find_region_city(region, data1)
+    data = clean_address1(address, region_strings)
+    new_data = strip_address(data)
+    data = clean_region(data, new_data, region)
+
+    city, data = find_region_city(region, data)
     if city:
         return city, data
     else:
         city = check_special_case(region)
-        return city
+        return city, data
 
 
 def print_bank_region1(region, address):
@@ -151,5 +150,13 @@ def print_bank_region1(region, address):
     return city, data
 
 
-x = print_bank_region1("երևան", "ՀՀ Արաբկիր մ․ ք․ ,Քոչար գ․ փողոց, 51/2/հիսունմեկ կոտորակ երկու/շենք, 13/1/տասներեք կոտորակ մեկ/բնակարան")
-print(x)
+
+x = print_bank_region('ՀՀ, ք. Նոր Նորք,  2-րդ թղմ, 45շ, 19բն')
+y = print_bank_region1('Երևան', "ՀՀ, ք. Երևան Նոր Նորք, մ․ համայնք 2-րդ թղմ, 45շ, 19բն")
+
+print(x[0])
+print(x[1])
+print(x[2])
+print('###################################')
+print(y[0])
+print(y[1])
